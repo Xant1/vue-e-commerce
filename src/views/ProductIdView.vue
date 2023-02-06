@@ -20,14 +20,15 @@
         </div>
       </div>
       <div class="col-2">
-        <p>{{ productData.brand }}</p>
-        <h1>{{ productData.title }}</h1>
-        <h4>{{ productData.price }}</h4>
-        <a class="btn">В корзину</a>
+        <p>{{ product.brand }}</p>
+        <h1>{{ product.title }}</h1>
+        <h4>$ {{ product.price }}</h4>
+        <input type="number" class="input" min="1" v-model="quantity" />
+        <a class="btn" @click="addToCart()">В корзину</a>
         <a class="btn">В избранное</a>
         <h3>Информация</h3>
         <br />
-        <p>{{ productData.description }}</p>
+        <p>{{ product.description }}</p>
       </div>
     </div>
   </div>
@@ -35,11 +36,12 @@
 
 <script>
 import axios from 'axios';
-
+import Swal from 'sweetalert2';
 export default {
   data() {
     return {
-      productData: [],
+      product: [],
+      quantity: 1,
       image: [],
     };
   },
@@ -63,13 +65,34 @@ export default {
         ProductImg.src = SmallImg[3].src;
       };
     },
+    addToCart() {
+      if (isNaN(this.quantity) || this.quantity < 1) {
+        this.quantity = 1;
+      }
+
+      const item = {
+        product: this.product,
+        quantity: this.quantity,
+      };
+
+      this.$store.commit('addToCart', item);
+
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'корзина для покупок',
+        text: 'продукт успешно добавлен в корзину',
+        showConfirmButton: false,
+        timer: 2500,
+      });
+    },
   },
 
   mounted() {
     const api = 'https://dummyjson.com/products/' + this.$route.params.id;
     axios.get(api).then((response) => {
-      this.productData = response.data;
-      this.image = this.productData.images;
+      this.product = response.data;
+      this.image = this.product.images;
     });
   },
 };
@@ -91,8 +114,9 @@ export default {
 }
 
 .col-2 {
-  flex-basis: 50%;
+  flex-basis: 45%;
   min-width: 300px;
+  margin-left: 5%;
 }
 
 .col-2 img {
@@ -139,6 +163,19 @@ export default {
   margin: 20px 0;
   font-size: 22px;
   font-weight: bold;
+}
+
+.single-product input {
+  width: 50px;
+  height: 40px;
+  padding-left: 10px;
+  font-size: 20px;
+  margin-right: 10px;
+  border: 1px solid #ff523b;
+}
+
+input:focus {
+  outline: none;
 }
 
 .small-img-row {

@@ -1,23 +1,27 @@
 <template>
   <div class="home">
-    
-      <div class="filter">
-        <input
-          placeholder="Пойск продукта....."
-          v-model="searchQuery"
-          type="text"
-        />
-        <div class="sort_prod">
-          <a  style="margin-right: 15px" @click="sortLowestPrice"
-            >сначала дешевле</a
-          >
-          <a style="margin-right: 15px" @click="sortHighestPrice"
-            >сначала дороже</a
-          >
-          <a @click="sortHighestRating">высокий рейтинг</a>
-        </div>
+    <router-link to="/cart" class="cart">
+      <span class="icon"><i class="fas fa-shopping-cart"></i></span>
+      <span>Cart ({{ cartTotalLength }})</span>
+    </router-link>
+
+    <div class="filter">
+      <input
+        placeholder="Пойск продукта....."
+        v-model="searchQuery"
+        type="text"
+      />
+      <div class="sort_prod">
+        <a style="margin-right: 15px" @click="sortLowestPrice"
+          >сначала дешевле</a
+        >
+        <a style="margin-right: 15px" @click="sortHighestPrice"
+          >сначала дороже</a
+        >
+        <a @click="sortHighestRating">высокий рейтинг</a>
       </div>
-    
+    </div>
+
     <div class="column side">
       <label>Категории</label> <br />
       <br />
@@ -55,7 +59,13 @@ export default {
       categories: [],
       searchQuery: '',
       activeCategory: '',
+      cart: {
+        items: [],
+      },
     };
+  },
+  beforeCreate() {
+    this.$store.commit('initializeStore');
   },
 
   mounted() {
@@ -66,6 +76,7 @@ export default {
       ];
       this.productsData = response.data.products;
     });
+    this.cart = this.$store.state.cart;
   },
 
   methods: {
@@ -94,6 +105,15 @@ export default {
             -1 && item.category.toLowerCase().indexOf(this.activeCategory) > -1
         );
       });
+    },
+    cartTotalLength() {
+      let totalLength = 0;
+
+      for (let i = 0; i < this.cart.items.length; i++) {
+        totalLength += this.cart.items[i].quantity;
+      }
+
+      return totalLength;
     },
   },
 
@@ -159,14 +179,17 @@ main .prod_box {
   text-decoration: none;
 }
 .category a:hover {
-  background-color: #ddd;
-  color: black;
-  
+  color: rgb(197, 194, 194);
 }
 
-.sort_prod a:hover{
- background-color: #333;
- color: #fff;
- cursor: pointer;
+.sort_prod a:hover {
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
+.cart {
+  float: right;
+  font-size: 23px;
 }
 </style>
