@@ -61,13 +61,11 @@
 <script>
 import HomeItem from '@/components/HomeItem';
 import axios from 'axios';
-
 export default {
   name: 'HomeView',
   components: {
     HomeItem,
   },
-
   data() {
     return {
       productsData: [],
@@ -89,13 +87,11 @@ export default {
   beforeCreate() {
     this.$store.commit('initializeStore');
   },
-
   methods: {
     // сортировка по цене
     sortLowestPrice() {
       this.productsData.sort((a, b) => (a.price > b.price ? 1 : -1));
     },
-
     sortHighestPrice() {
       this.productsData.sort((a, b) => (a.price < b.price ? 1 : -1));
     },
@@ -142,11 +138,9 @@ export default {
       }
     },
   },
-
   mounted() {
     // вызов функции для загрузки данных
     this.fetchProducts();
-
     //IntersectionObserver для бесконечного скроллинга
     const options = {
       rootMargin: '0px',
@@ -155,16 +149,14 @@ export default {
     const callback = (entries, observer) => {
       if (entries[0].isIntersecting) {
         this.loadMoreProduct();
-        console.log('peresek');
+        
       }
     };
     const observer = new IntersectionObserver(callback, options);
     observer.observe(this.$refs.observer);
-
     // состаяние корзины из vuex
     this.cart = this.$store.state.cart;
   },
-
   computed: {
     // компьютед функция для пойска по названии и по категории 
     // сортировка по категории возможна только с теми данными которые уже поступили пользователю, 
@@ -181,11 +173,9 @@ export default {
     // счетчик для корзины
     cartTotalLength() {
       let totalLength = 0;
-
       for (let i = 0; i < this.cart.items.length; i++) {
         totalLength += this.cart.items[i].quantity;
       }
-
       return totalLength;
     },
   },
@@ -201,12 +191,11 @@ export default {
 /* main content */
 main {
   display: flex;
-  width: 90%;
+  width: 85%;
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 43px;
 }
-
 main .prod_box {
   width: 100%;
   margin-bottom: 50px;
@@ -220,22 +209,18 @@ main .prod_box {
 .column {
   float: left;
 }
-
 .column.side {
-  width: 10%;
+  width: 15%;
 }
-
 .title_box {
   text-align: center;
   font-size: 17px;
   font-weight: bold;
   color: #080808;
 }
-
 ul.left_menu {
   width: 196px;
 }
-
 ul.left_menu li.category a {
   width: 166px;
   height: 25px;
@@ -245,11 +230,28 @@ ul.left_menu li.category a {
   padding: 0 0 0 30px;
   line-height: 25px;
 }
-
 ul.left_menu li.category a:hover {
   color: #ffffff;
   background-color: #5f5c5c;
 }
+
+.category {
+  overflow: hidden;
+  background-color: #333;
+}
+
+.category a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+.category a:hover {
+  color: rgb(197, 194, 194);
+}
+
 /* search & sort*/
 .filter {
   display: flex;
@@ -257,12 +259,10 @@ ul.left_menu li.category a:hover {
   margin-bottom: 30px;
   justify-content: space-between;
 }
-
 .filter input {
   width: 35%;
   float: left;
 }
-
 .sort_prod a:hover {
   background-color: #333;
   color: #fff;
@@ -273,26 +273,21 @@ ul.left_menu li.category a:hover {
   overflow: hidden;
   background-color: #333;
 }
-
 .topnav .cart {
   float: right;
 }
-
 .topnav .favor {
   float: right;
 }
-
 .topnav a {
   float: left;
   color: #f2f2f2;
   padding: 14px 16px;
 }
-
 .topnav a:hover {
   background-color: #ddd;
   color: black;
 }
-
 a {
   text-decoration: none;
 }
@@ -306,7 +301,6 @@ a {
     width: 50%;
   }
 }
-
 @media only screen and (max-width: 1000px) {
   .column.side {
     width: 100%;
@@ -314,18 +308,23 @@ a {
   ul.left_menu {
     width: 100%;
   }
-
   main {
     width: 100%;
   }
-
   .filter {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
   }
   .filter input {
     width: 100%;
     margin-bottom: 15px;
   }
+
+  .filter .sort_prod {
+    display: flex;
+    justify-content: center;
+  }
+
 }
 </style>
