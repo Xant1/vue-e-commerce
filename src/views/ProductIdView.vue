@@ -25,7 +25,7 @@
         <h4>$ {{ product.price }}</h4>
         <input type="number" class="input" min="1" v-model="quantity" />
         <a class="btn" @click="addToCart()">В корзину</a>
-        <a class="btn">В избранное</a>
+        <a class="btn" @click="addToFavor()">В избранное</a>
         <h3>Информация</h3>
         <br />
         <p>{{ product.description }}</p>
@@ -82,6 +82,27 @@ export default {
         icon: 'success',
         title: 'корзина для покупок',
         text: 'продукт успешно добавлен в корзину',
+        showConfirmButton: false,
+        timer: 2500,
+      });
+    },
+    addToFavor() {
+      if (isNaN(this.quantity) || this.quantity < 1) {
+        this.quantity = 1;
+      }
+
+      const item = {
+        product: this.product,
+        quantity: this.quantity,
+      };
+
+      this.$store.commit('addToFavor', item);
+
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'избранные',
+        text: 'продукт успешно добавлен в избранные',
         showConfirmButton: false,
         timer: 2500,
       });

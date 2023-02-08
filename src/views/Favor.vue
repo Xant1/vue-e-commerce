@@ -1,25 +1,23 @@
 <template>
-  <div class="page-cart">
+  <div>
     <div class="wrapper">
-      <h1 class="title">Корзина</h1>
+      <h1 class="title">Избранные</h1>
       <hr />
       <br />
       <div class="column_box">
-        <table v-if="cartTotalLength">
+        <table v-if="favorTotalLength">
           <thead>
             <tr>
               <th>Продукт</th>
               <th>Бренд</th>
               <th>Цена</th>
-              <th>Количество</th>
-              <th>Сумма</th>
               <th></th>
             </tr>
           </thead>
 
           <tbody>
-            <CartItem
-              v-for="item in cart.items"
+            <FavorItem
+              v-for="item in favor.items"
               :key="item.product.id"
               :initialItem="item"
               @removeFromCart="removeFromCart"
@@ -27,36 +25,24 @@
           </tbody>
         </table>
 
-        <p v-else>Ваша корзина пуста...</p>
+        <p v-else>Ваш список избранных пуст...</p>
       </div>
       <br />
-      <div class="summary">
-        <h2>Общая сумма</h2>
-        <br />
-        <strong style="color: red">${{ cartTotalPrice.toFixed(2) }}</strong
-        >, {{ cartTotalLength }} продуктов
-        <hr />
-        <br />
-        <div class="btns">
-        <a href="#">Оформить заказ</a>
-        <a style="background-color: red;" @click="clearCartItems" href="#">очистить корзину</a>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
-import CartItem from '@/components/CartItem.vue';
+import FavorItem from '@/components/FavorItem.vue';
 
 export default {
-  name: 'Cart',
+  name: 'Favor',
   components: {
-    CartItem,
+    FavorItem,
   },
   data() {
     return {
-      cart: {
+      favor: {
         items: [],
       },
     };
@@ -65,28 +51,19 @@ export default {
     this.$store.commit('initializeStore');
   },
   mounted() {
-    this.cart = this.$store.state.cart;
+    this.favor = this.$store.state.favor;
   },
   methods: {
     removeFromCart(item) {
-      this.cart.items = this.cart.items.filter(
+      this.favor.items = this.favor.items.filter(
         (i) => i.product.id !== item.product.id
       );
     },
-    clearCartItems() {
-      this.cart.items = [];
-      this.$store.dispatch('clearCartItems');
-    },
   },
   computed: {
-    cartTotalLength() {
-      return this.cart.items.reduce((acc, curVal) => {
+    favorTotalLength() {
+      return this.favor.items.reduce((acc, curVal) => {
         return (acc += curVal.quantity);
-      }, 0);
-    },
-    cartTotalPrice() {
-      return this.cart.items.reduce((acc, curVal) => {
-        return (acc += curVal.product.price * curVal.quantity);
       }, 0);
     },
   },
@@ -106,11 +83,6 @@ a {
 
 a:hover {
   background-color: #2e2c2c;
-}
-
-.btns{
-  display: flex;
-  justify-content: space-between;
 }
 
 table {

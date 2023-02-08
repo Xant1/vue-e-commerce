@@ -5,7 +5,7 @@
         <img :src="product.images[0]" alt="" />
         <h1>{{ product.title }}</h1>
         <p>
-          Рейтинг: <img class="star" src="../assets/star.png" />
+          Рейтинг: <i class="fas fa-star"></i>
           {{ product.rating }}
         </p>
         <p>
@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'HomeItem',
   props: {
     product: {
       type: Object,
@@ -34,15 +34,12 @@ img {
   aspect-ratio: 16/12;
 }
 
-.star {
-  width: 19px;
-}
-
-a{
+a {
   cursor: pointer;
 }
 
-span.price {
-  color: #ff0000;
+.price {
+  color: grey;
+  font-size: 22px;
 }
 </style>

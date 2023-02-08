@@ -8,12 +8,6 @@
     </td>
     <td>${{ item.product.price }}</td>
     <td>
-      <a style="cursor: pointer" @click="decrementQuantity(item)">-</a>
-      {{ item.quantity }}
-      <a style="cursor: pointer" @click="incrementQuantity(item)">+</a>
-    </td>
-    <td>${{ getItemTotal(item).toFixed(2) }}</td>
-    <td>
       <a style="color: red; cursor: pointer" @click="removeFromCart(item)">X</a>
     </td>
   </tr>
@@ -21,7 +15,7 @@
 
 <script>
 export default {
-  name: 'CartItem',
+  name: 'FavorItem',
   props: {
     initialItem: Object,
   },
@@ -34,22 +28,8 @@ export default {
     getItemTotal(item) {
       return item.quantity * item.product.price;
     },
-    decrementQuantity(item) {
-      item.quantity -= 1;
-
-      if (item.quantity === 0) {
-        this.$emit('removeFromCart', item);
-      }
-
-      this.updateCart();
-    },
-    incrementQuantity(item) {
-      item.quantity += 1;
-
-      this.updateCart();
-    },
     updateCart() {
-      localStorage.setItem('cart', JSON.stringify(this.$store.state.cart));
+      localStorage.setItem('favor', JSON.stringify(this.$store.state.favor));
     },
     removeFromCart(item) {
       this.$emit('removeFromCart', item);
