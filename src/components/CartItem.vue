@@ -31,9 +31,11 @@ export default {
     };
   },
   methods: {
+   
     getItemTotal(item) {
       return item.quantity * item.product.price;
     },
+    
     decrementQuantity(item) {
       item.quantity -= 1;
 
@@ -43,14 +45,17 @@ export default {
 
       this.updateCart();
     },
+    
     incrementQuantity(item) {
       item.quantity += 1;
 
       this.updateCart();
     },
+    
     updateCart() {
       localStorage.setItem('cart', JSON.stringify(this.$store.state.cart));
     },
+    
     removeFromCart(item) {
       this.$emit('removeFromCart', item);
 

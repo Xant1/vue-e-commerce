@@ -62,28 +62,34 @@ export default {
     };
   },
   beforeCreate() {
+    //состояние из vuex
     this.$store.commit('initializeStore');
   },
   mounted() {
+    //состояние корзины из vuex
     this.cart = this.$store.state.cart;
   },
   methods: {
+    // удаление из корзины
     removeFromCart(item) {
       this.cart.items = this.cart.items.filter(
         (i) => i.product.id !== item.product.id
       );
     },
+    // очистка корзины
     clearCartItems() {
       this.cart.items = [];
       this.$store.dispatch('clearCartItems');
     },
   },
   computed: {
+    // количество продуктов в корзине
     cartTotalLength() {
       return this.cart.items.reduce((acc, curVal) => {
         return (acc += curVal.quantity);
       }, 0);
     },
+    // общая сумма для оплаты
     cartTotalPrice() {
       return this.cart.items.reduce((acc, curVal) => {
         return (acc += curVal.product.price * curVal.quantity);

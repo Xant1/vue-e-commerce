@@ -47,6 +47,7 @@ export default {
   },
 
   methods: {
+    //функция чтобы поменять выбранную картинку на другую
     changeImg() {
       let ProductImg = document.getElementById('ProductImg');
       let SmallImg = document.getElementsByClassName('small-img');
@@ -65,6 +66,7 @@ export default {
         ProductImg.src = SmallImg[3].src;
       };
     },
+    // добавить продукт в корзину
     addToCart() {
       if (isNaN(this.quantity) || this.quantity < 1) {
         this.quantity = 1;
@@ -86,6 +88,7 @@ export default {
         timer: 2500,
       });
     },
+    // добавить продукт в избранные
     addToFavor() {
       if (isNaN(this.quantity) || this.quantity < 1) {
         this.quantity = 1;
@@ -110,6 +113,7 @@ export default {
   },
 
   mounted() {
+    // загрузка конкретного продукта по id
     const api = 'https://dummyjson.com/products/' + this.$route.params.id;
     axios.get(api).then((response) => {
       this.product = response.data;

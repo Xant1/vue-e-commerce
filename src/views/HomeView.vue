@@ -20,29 +20,28 @@
         type="text"
       />
       <div class="sort_prod">
-        <a style="margin-right: 15px" @click="sortLowestPrice"
-          >сначала дешевле</a
-        >
-        <a style="margin-right: 15px" @click="sortHighestPrice"
-          >сначала дороже</a
-        >
+        <a style="margin-right: 15px" @click="sortLowestPrice">дешевле</a>
+        <a style="margin-right: 15px" @click="sortHighestPrice">дороже</a>
         <a @click="sortHighestRating">высокий рейтинг</a>
       </div>
     </div>
 
     <div class="column side">
-      <label>Категории</label> <br />
-      <br />
-      <div class="category">
-        <a href="#" @click="updateActiveCategory">All</a>
-        <a
-          v-for="(category, index) in categories"
-          :key="index"
-          href="#"
-          @click="updateActiveCategory"
-          >{{ category }}</a
-        >
-      </div>
+      <ul class="left_menu">
+        <div class="title_box">Категории</div>
+        <li class="category">
+          <a href="#" @click="updateActiveCategory">All</a>
+        </li>
+        <li class="category">
+          <a
+            v-for="(category, index) in categories"
+            :key="index"
+            href="#"
+            @click="updateActiveCategory"
+            >{{ category }}</a
+          >
+        </li>
+      </ul>
     </div>
 
     <main>
@@ -86,11 +85,13 @@ export default {
       },
     };
   },
+  // состояние из vuex
   beforeCreate() {
     this.$store.commit('initializeStore');
   },
 
   methods: {
+    // сортировка по цене
     sortLowestPrice() {
       this.productsData.sort((a, b) => (a.price > b.price ? 1 : -1));
     },
@@ -98,15 +99,15 @@ export default {
     sortHighestPrice() {
       this.productsData.sort((a, b) => (a.price < b.price ? 1 : -1));
     },
-
+    // сортировка по рейтингу
     sortHighestRating() {
       this.productsData.sort((a, b) => (a.rating < b.rating ? 1 : -1));
     },
-
+    // сортировка по катергории
     updateActiveCategory(e) {
       this.activeCategory = e.target.text == 'All' ? '' : e.target.text;
     },
-
+    // загрузка данных 
     async fetchProducts() {
       try {
         this.isPostsLoading = true;
@@ -120,12 +121,13 @@ export default {
           ...new Set(response.data.products.map((x) => x.category)),
         ];
       } catch (e) {
-        alert('Ошибка');
+        console.log('ошибка с загрузкой данных');
       } finally {
         this.isPostsLoading = false;
       }
     },
-
+    // загрузка доп данных для бесконечного скроллинга
+    // dummyjson api не выдает page, только skip и limit для пагинации, поэтому пришлось написать этот велосипед для бесконечного скроллинга :)
     async loadMoreProduct() {
       try {
         const response = await axios.get('https://dummyjson.com/products', {
@@ -136,14 +138,16 @@ export default {
         });
         this.productsData = [...this.productsData, ...response.data.products];
       } catch (e) {
-        alert('Ошибка');
+        console.log('ошибка с загрузкой данных');
       }
     },
   },
 
   mounted() {
+    // вызов функции для загрузки данных
     this.fetchProducts();
 
+    //IntersectionObserver для бесконечного скроллинга
     const options = {
       rootMargin: '0px',
       threshold: 1.0,
@@ -157,10 +161,15 @@ export default {
     const observer = new IntersectionObserver(callback, options);
     observer.observe(this.$refs.observer);
 
+    // состаяние корзины из vuex
     this.cart = this.$store.state.cart;
   },
 
   computed: {
+    // компьютед функция для пойска по названии и по категории 
+    // сортировка по категории возможна только с теми данными которые уже поступили пользователю, 
+    //в api нету возможности для получение данных по query запросу category, 
+    //а то я хотел вывести все названии из категории и потом делать query запросы  при нажатии пользователя по этим значениям, но есть что есть
     SearchedProducts() {
       return this.productsData.filter((item) => {
         return (
@@ -169,6 +178,7 @@ export default {
         );
       });
     },
+    // счетчик для корзины
     cartTotalLength() {
       let totalLength = 0;
 
@@ -180,6 +190,7 @@ export default {
     },
   },
   watch: {
+    // динамический дополняем категории при поступлении новых данных в productsData
     productsData() {
       this.categories = [...new Set(this.productsData.map((x) => x.category))];
     },
@@ -187,16 +198,17 @@ export default {
 };
 </script>
 <style scoped>
+/* main content */
 main {
   display: flex;
-  width: 85%;
+  width: 90%;
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 43px;
 }
 
 main .prod_box {
-  width: 30%;
+  width: 100%;
   margin-bottom: 50px;
   background: #f5f5f5;
   margin-right: 25px;
@@ -204,17 +216,41 @@ main .prod_box {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   max-width: 300px;
 }
-
+/* category column */
 .column {
   float: left;
-  padding: 19px;
-  margin-bottom: 99px;
 }
 
 .column.side {
-  width: 11%;
+  width: 10%;
 }
 
+.title_box {
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+  color: #080808;
+}
+
+ul.left_menu {
+  width: 196px;
+}
+
+ul.left_menu li.category a {
+  width: 166px;
+  height: 25px;
+  background-color: #333;
+  text-decoration: none;
+  color: #ffffff;
+  padding: 0 0 0 30px;
+  line-height: 25px;
+}
+
+ul.left_menu li.category a:hover {
+  color: #ffffff;
+  background-color: #5f5c5c;
+}
+/* search & sort*/
 .filter {
   display: flex;
   padding: 15px;
@@ -223,25 +259,8 @@ main .prod_box {
 }
 
 .filter input {
-  width: 25%;
+  width: 35%;
   float: left;
-}
-
-.category {
-  overflow: hidden;
-  background-color: #333;
-}
-
-.category a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-.category a:hover {
-  color: rgb(197, 194, 194);
 }
 
 .sort_prod a:hover {
@@ -249,7 +268,7 @@ main .prod_box {
   color: #fff;
   cursor: pointer;
 }
-
+/* navigation  */
 .topnav {
   overflow: hidden;
   background-color: #333;
@@ -263,14 +282,12 @@ main .prod_box {
   float: right;
 }
 
-/* Style the topnav links */
 .topnav a {
   float: left;
   color: #f2f2f2;
   padding: 14px 16px;
 }
 
-/* Change color on hover */
 .topnav a:hover {
   background-color: #ddd;
   color: black;
@@ -278,5 +295,37 @@ main .prod_box {
 
 a {
   text-decoration: none;
+}
+/* responsive   */
+@media only screen and (max-width: 1200px) {
+  main {
+    width: 70%;
+    float: right;
+  }
+  .filter input {
+    width: 50%;
+  }
+}
+
+@media only screen and (max-width: 1000px) {
+  .column.side {
+    width: 100%;
+  }
+  ul.left_menu {
+    width: 100%;
+  }
+
+  main {
+    width: 100%;
+  }
+
+  .filter {
+    display: flex;
+    flex-direction: column;
+  }
+  .filter input {
+    width: 100%;
+    margin-bottom: 15px;
+  }
 }
 </style>

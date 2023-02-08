@@ -20,7 +20,7 @@
               v-for="item in favor.items"
               :key="item.product.id"
               :initialItem="item"
-              @removeFromCart="removeFromCart"
+              @removeFromFavor="removeFromFavor"
             />
           </tbody>
         </table>
@@ -47,19 +47,23 @@ export default {
       },
     };
   },
+  //состояние из vuex
   beforeCreate() {
     this.$store.commit('initializeStore');
   },
+  //состояние избранных из vuex
   mounted() {
     this.favor = this.$store.state.favor;
   },
+  //удаление из избранных
   methods: {
-    removeFromCart(item) {
+    removeFromFavor(item) {
       this.favor.items = this.favor.items.filter(
         (i) => i.product.id !== item.product.id
       );
     },
   },
+  // количество избранных продуктов
   computed: {
     favorTotalLength() {
       return this.favor.items.reduce((acc, curVal) => {

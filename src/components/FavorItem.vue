@@ -8,7 +8,7 @@
     </td>
     <td>${{ item.product.price }}</td>
     <td>
-      <a style="color: red; cursor: pointer" @click="removeFromCart(item)">X</a>
+      <a style="color: red; cursor: pointer" @click="removeFromFavor(item)">X</a>
     </td>
   </tr>
 </template>
@@ -28,13 +28,13 @@ export default {
     getItemTotal(item) {
       return item.quantity * item.product.price;
     },
-    updateCart() {
+    updateFavor() {
       localStorage.setItem('favor', JSON.stringify(this.$store.state.favor));
     },
-    removeFromCart(item) {
-      this.$emit('removeFromCart', item);
+    removeFromFavor(item) {
+      this.$emit('removeFromFavor', item);
 
-      this.updateCart();
+      this.updateFavor();
     },
   },
 };
