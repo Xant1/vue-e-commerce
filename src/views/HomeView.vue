@@ -1,17 +1,6 @@
 <template>
   <div class="home">
-    <nav class="topnav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-      <router-link to="/cart" class="cart">
-        <span class="icon"><i class="fas fa-shopping-cart"></i></span>
-        <span> Корзина ({{ cartTotalLength }})</span>
-      </router-link>
-      <router-link to="/favourites" class="favor">
-        <span class="icon"><i class="fas fa-star"></i></span>
-        <span> Избранные</span>
-      </router-link>
-    </nav>
+
 
     <div class="filter">
       <input
@@ -75,18 +64,9 @@ export default {
       activeCategory: '',
       skip: 0,
       limit: 6,
-      cart: {
-        items: [],
-      },
-      favor: {
-        items: [],
-      },
     };
   },
-  // состояние из vuex
-  beforeCreate() {
-    this.$store.commit('initializeStore');
-  },
+
   methods: {
     // сортировка по цене
     sortLowestPrice() {
@@ -103,7 +83,7 @@ export default {
     updateActiveCategory(e) {
       this.activeCategory = e.target.text == 'All' ? '' : e.target.text;
     },
-    // загрузка данных 
+    // загрузка данных
     async fetchProducts() {
       try {
         this.isPostsLoading = true;
@@ -149,18 +129,16 @@ export default {
     const callback = (entries, observer) => {
       if (entries[0].isIntersecting) {
         this.loadMoreProduct();
-        
       }
     };
     const observer = new IntersectionObserver(callback, options);
     observer.observe(this.$refs.observer);
-    // состаяние корзины из vuex
-    this.cart = this.$store.state.cart;
+
   },
   computed: {
-    // компьютед функция для пойска по названии и по категории 
-    // сортировка по категории возможна только с теми данными которые уже поступили пользователю, 
-    //в api нету возможности для получение данных по query запросу category, 
+    // компьютед функция для пойска по названии и по категории
+    // сортировка по категории возможна только с теми данными которые уже поступили пользователю,
+    //в api нету возможности для получение данных по query запросу category,
     //а то я хотел вывести все названии из категории и потом делать query запросы  при нажатии пользователя по этим значениям, но есть что есть
     SearchedProducts() {
       return this.productsData.filter((item) => {
@@ -170,14 +148,7 @@ export default {
         );
       });
     },
-    // счетчик для корзины
-    cartTotalLength() {
-      let totalLength = 0;
-      for (let i = 0; i < this.cart.items.length; i++) {
-        totalLength += this.cart.items[i].quantity;
-      }
-      return totalLength;
-    },
+ 
   },
   watch: {
     // динамический дополняем категории при поступлении новых данных в productsData
@@ -269,28 +240,7 @@ ul.left_menu li.category a:hover {
   cursor: pointer;
 }
 /* navigation  */
-.topnav {
-  overflow: hidden;
-  background-color: #333;
-}
-.topnav .cart {
-  float: right;
-}
-.topnav .favor {
-  float: right;
-}
-.topnav a {
-  float: left;
-  color: #f2f2f2;
-  padding: 14px 16px;
-}
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-a {
-  text-decoration: none;
-}
+
 /* responsive   */
 @media only screen and (max-width: 1200px) {
   main {
@@ -325,6 +275,5 @@ a {
     display: flex;
     justify-content: center;
   }
-
 }
 </style>

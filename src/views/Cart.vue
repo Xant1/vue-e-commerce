@@ -33,13 +33,15 @@
       <div class="summary">
         <h2>Общая сумма</h2>
         <br />
-        <strong style="color: red">${{ cartTotalPrice.toFixed(2) }}</strong
-        >, {{ cartTotalLength }} продуктов
+        <strong style="color: red">${{ cartTotalPrice.toFixed(2) }}</strong>, 
+        {{ cartTotalLength }} продуктов
         <hr />
         <br />
         <div class="btns">
-        <a href="#">Оформить заказ</a>
-        <a style="background-color: red;" @click="clearCartItems" href="#">очистить корзину</a>
+          <a href="#">Оформить заказ</a>
+          <a style="background-color: red" @click="clearCartItems" href="#"
+            >очистить корзину</a
+          >
         </div>
       </div>
     </div>
@@ -114,7 +116,7 @@ a:hover {
   background-color: #2e2c2c;
 }
 
-.btns{
+.btns {
   display: flex;
   justify-content: space-between;
 }
