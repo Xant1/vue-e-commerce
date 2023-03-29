@@ -1,4 +1,4 @@
-# mediana-ecommerce
+# vue3-ecommerce
 
 ## Project setup
 ```
