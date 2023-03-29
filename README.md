@@ -1,4 +1,7 @@
-# vue3-e-commerce
+# - Vue3-E-Commerce
+# - Javascript, Vue.js, Vuex, Html, Css
+# - Api: https://dummyjson.com/docs/products
+
 
 ## Project setup
 ```
