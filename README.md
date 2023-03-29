@@ -1,4 +1,4 @@
-# vue3-ecommerce
+# vue3-e-commerce
 
 ## Project setup
 ```
