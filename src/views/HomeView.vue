@@ -1,7 +1,5 @@
 <template>
   <div class="home">
-
-
     <div class="filter">
       <input
         placeholder="Пойск продукта....."
@@ -36,7 +34,7 @@
     <main>
       <HomeItem
         class="prod_box"
-        v-for="product in SearchedProducts"
+        v-for="product in searchedProducts"
         :product="product"
         :key="product.id"
       />
@@ -50,21 +48,13 @@
 <script>
 import HomeItem from '@/components/HomeItem';
 import axios from 'axios';
+import { useProducts } from '@/hooks/useProducts';
+import useSearchedProducts from '@/hooks/useSearchedProducts';
+
 export default {
   name: 'HomeView',
   components: {
     HomeItem,
-  },
-  data() {
-    return {
-      productsData: [],
-      categories: [],
-      isPostsLoading: false,
-      searchQuery: '',
-      activeCategory: '',
-      skip: 0,
-      limit: 6,
-    };
   },
 
   methods: {
@@ -83,27 +73,7 @@ export default {
     updateActiveCategory(e) {
       this.activeCategory = e.target.text == 'All' ? '' : e.target.text;
     },
-    // загрузка данных
-    async fetchProducts() {
-      try {
-        this.isPostsLoading = true;
-        const response = await axios.get('https://dummyjson.com/products', {
-          params: {
-            limit: this.limit,
-          },
-        });
-        this.productsData = [...new Set(response.data.products)];
-        this.categories = [
-          ...new Set(response.data.products.map((x) => x.category)),
-        ];
-      } catch (e) {
-        console.log('ошибка с загрузкой данных');
-      } finally {
-        this.isPostsLoading = false;
-      }
-    },
     // загрузка доп данных для бесконечного скроллинга
-    // dummyjson api не выдает page, только skip и limit для пагинации, поэтому пришлось написать этот велосипед для бесконечного скроллинга :)
     async loadMoreProduct() {
       try {
         const response = await axios.get('https://dummyjson.com/products', {
@@ -118,9 +88,26 @@ export default {
       }
     },
   },
+  // загрузка данных
+  setup(props) {
+    const { productsData, isPostsLoading, categories, skip, limit } =
+      useProducts();
+    const { searchQuery, searchedProducts, activeCategory } =
+      useSearchedProducts(productsData);
+
+    return {
+      productsData,
+      isPostsLoading,
+      categories,
+      skip,
+      limit,
+      searchQuery,
+      searchedProducts,
+      activeCategory,
+    };
+  },
+
   mounted() {
-    // вызов функции для загрузки данных
-    this.fetchProducts();
     //IntersectionObserver для бесконечного скроллинга
     const options = {
       rootMargin: '0px',
@@ -133,23 +120,8 @@ export default {
     };
     const observer = new IntersectionObserver(callback, options);
     observer.observe(this.$refs.observer);
+  },
 
-  },
-  computed: {
-    // компьютед функция для пойска по названии и по категории
-    // сортировка по категории возможна только с теми данными которые уже поступили пользователю,
-    //в api нету возможности для получение данных по query запросу category,
-    //а то я хотел вывести все названии из категории и потом делать query запросы  при нажатии пользователя по этим значениям, но есть что есть
-    SearchedProducts() {
-      return this.productsData.filter((item) => {
-        return (
-          item.title.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >
-            -1 && item.category.toLowerCase().indexOf(this.activeCategory) > -1
-        );
-      });
-    },
- 
-  },
   watch: {
     // динамический дополняем категории при поступлении новых данных в productsData
     productsData() {

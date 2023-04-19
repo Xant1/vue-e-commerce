@@ -1,7 +1,6 @@
 <template>
   <nav class="topnav">
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
     <router-link to="/cart" class="cart">
       <span class="icon"><i class="fas fa-shopping-cart"></i></span>
       <span> Корзина ({{ cartTotalLength }})</span>
