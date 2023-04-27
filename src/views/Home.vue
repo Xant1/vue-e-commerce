@@ -34,9 +34,9 @@
     <main>
       <HomeItem
         class="prod_box"
-        v-for="product in searchedProducts"
+        v-for="(product, index) in searchedProducts"
         :product="product"
-        :key="product.id"
+        :key="index"
       />
       <div v-if="!isPostsLoading"></div>
       <h1 v-else>Идет загрузка...</h1>
