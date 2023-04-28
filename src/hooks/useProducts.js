@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 
 export function useProducts() {
   const productsData = ref([]);
@@ -27,6 +27,24 @@ export function useProducts() {
     }
   };
 
+  const loadMoreProduct = async () => {
+    try {
+      const response = await axios.get('https://dummyjson.com/products', {
+        params: {
+          skip: (skip.value += 6),
+          limit: limit.value,
+        },
+      });
+      productsData.value = [...productsData.value, ...response.data.products];
+    } catch (e) {
+      console.log('ошибка с загрузкой данных');
+    }
+  };
+
+  watch(productsData, (newValue, oldValue) => {
+    categories.value = [...new Set(productsData.value.map((x) => x.category))];
+  });
+
   onMounted(fetching);
 
   return {
@@ -35,5 +53,6 @@ export function useProducts() {
     categories,
     skip,
     limit,
+    loadMoreProduct
   };
 }

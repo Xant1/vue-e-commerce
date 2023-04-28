@@ -40,6 +40,7 @@
       />
       <div v-if="!isPostsLoading"></div>
       <h1 v-else>Идет загрузка...</h1>
+      <div v-intersection="loadMoreProduct" class="observer"></div>
     </main>
     <div ref="observer" class="observer"></div>
   </div>
@@ -47,9 +48,9 @@
 
 <script>
 import HomeItem from '@/components/HomeItem';
-import axios from 'axios';
 import { useProducts } from '@/hooks/useProducts';
 import useSearchedProducts from '@/hooks/useSearchedProducts';
+import useSortedProducts from '@/hooks/useSortedProducts';
 
 export default {
   name: 'HomeView',
@@ -57,43 +58,23 @@ export default {
     HomeItem,
   },
 
-  methods: {
-    // сортировка по цене
-    sortLowestPrice() {
-      this.productsData.sort((a, b) => (a.price > b.price ? 1 : -1));
-    },
-    sortHighestPrice() {
-      this.productsData.sort((a, b) => (a.price < b.price ? 1 : -1));
-    },
-    // сортировка по рейтингу
-    sortHighestRating() {
-      this.productsData.sort((a, b) => (a.rating < b.rating ? 1 : -1));
-    },
-    // сортировка по катергории
-    updateActiveCategory(e) {
-      this.activeCategory = e.target.text == 'All' ? '' : e.target.text;
-    },
-    // загрузка доп данных для бесконечного скроллинга
-    async loadMoreProduct() {
-      try {
-        const response = await axios.get('https://dummyjson.com/products', {
-          params: {
-            skip: (this.skip += 6),
-            limit: this.limit,
-          },
-        });
-        this.productsData = [...this.productsData, ...response.data.products];
-      } catch (e) {
-        console.log('ошибка с загрузкой данных');
-      }
-    },
-  },
-  // загрузка данных
   setup(props) {
-    const { productsData, isPostsLoading, categories, skip, limit } =
-      useProducts();
+    const {
+      productsData,
+      isPostsLoading,
+      categories,
+      skip,
+      limit,
+      loadMoreProduct,
+    } = useProducts();
     const { searchQuery, searchedProducts, activeCategory } =
       useSearchedProducts(productsData);
+    const {
+      sortLowestPrice,
+      sortHighestPrice,
+      sortHighestRating,
+      updateActiveCategory,
+    } = useSortedProducts(productsData, activeCategory);
 
     return {
       productsData,
@@ -101,32 +82,15 @@ export default {
       categories,
       skip,
       limit,
+      loadMoreProduct,
       searchQuery,
       searchedProducts,
       activeCategory,
+      sortLowestPrice,
+      sortHighestPrice,
+      sortHighestRating,
+      updateActiveCategory,
     };
-  },
-
-  mounted() {
-    //IntersectionObserver для бесконечного скроллинга
-    const options = {
-      rootMargin: '0px',
-      threshold: 1.0,
-    };
-    const callback = (entries, observer) => {
-      if (entries[0].isIntersecting) {
-        this.loadMoreProduct();
-      }
-    };
-    const observer = new IntersectionObserver(callback, options);
-    observer.observe(this.$refs.observer);
-  },
-
-  watch: {
-    // динамический дополняем категории при поступлении новых данных в productsData
-    productsData() {
-      this.categories = [...new Set(this.productsData.map((x) => x.category))];
-    },
   },
 };
 </script>
